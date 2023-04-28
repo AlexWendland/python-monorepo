@@ -4,8 +4,6 @@ repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.4.0
     hooks:
-      - id: trailing-whitespace
-      - id: end-of-file-fixer
       # This will check that yaml files are valid and correctly formatted
       - id: check-yaml
       # This will check if large files have been added to the repository.
