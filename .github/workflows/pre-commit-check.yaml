@@ -6,13 +6,27 @@ on:
     branches: [main]
 
 jobs:
-  main:
+  pre-commit:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-python@v4
+    - name: Check out code
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
       with:
         python-version: 3.x
-    - uses: pre-commit/action@v3.0.0
-    - uses: pre-commit-ci/lite-action@v1.0.1
-      if: always()
+
+    - name: Install pre-commit
+      run: pip install pre-commit
+
+    - name: Run pre-commit on changed files
+      run: |
+        git fetch origin ${{ github.base_ref }}
+        CHANGED_FILES=$(git diff --name-only --diff-filter=d origin/${{ github.base_ref }} ${{ github.sha }})
+        echo "Changed files: $CHANGED_FILES"
+        for FILE in $CHANGED_FILES; do
+          pre-commit run --files $FILE
+        done
